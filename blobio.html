@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>blob io</title>
+<style>
+body{
+    margin:0;
+    background:#111;
+    overflow:hidden;
+}
+canvas{
+    display:block;
+    margin:auto;
+    background:#1b1b1b;
+}
+</style>
+</head>
+<body>
+
+<canvas id="game" width="600" height="600"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+let blob = [{x:300,y:300}];
+let dir = {x:1,y:0};
+let food = {x:100,y:100};
+
+document.addEventListener("keydown", e=>{
+    if(e.key==="ArrowUp") dir={x:0,y:-1};
+    if(e.key==="ArrowDown") dir={x:0,y:1};
+    if(e.key==="ArrowLeft") dir={x:-1,y:0};
+    if(e.key==="ArrowRight") dir={x:1,y:0};
+});
+
+function spawnFood(){
+    food.x = Math.floor(Math.random()*30)*20;
+    food.y = Math.floor(Math.random()*30)*20;
+}
+
+function update(){
+    let head = {
+        x: blob[0].x + dir.x*20,
+        y: blob[0].y + dir.y*20
+    };
+
+    blob.unshift(head);
+
+    if(head.x===food.x && head.y===food.y){
+        spawnFood();
+    }else{
+        blob.pop();
+    }
+}
+
+function draw(){
+    ctx.clearRect(0,0,600,600);
+
+
+    ctx.fillStyle="red";
+    ctx.beginPath();
+    ctx.arc(food.x+10,food.y+10,8,0,Math.PI*2);
+    ctx.fill();
+
+  
+    ctx.fillStyle="lime";
+    blob.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x+10,p.y+10,10,0,Math.PI*2);
+        ctx.fill();
+    });
+}
+
+function loop(){
+    update();
+    draw();
+}
+
+setInterval(loop,120);
+spawnFood();
+</script>
+
+</body>
+</html>
